@@ -1,0 +1,14 @@
+{% extends "root.html" %}
+{% load bootstrap5 %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+
+
+    <input type="submit" value="닉네임 생성">
+</form>
+
+{% endblock %}

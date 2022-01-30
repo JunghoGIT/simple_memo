@@ -5,6 +5,7 @@ from . import views
 app_name = 'memo'
 
 urlpatterns = [
-    path('', views.memo_list)
+    path('', views.index, name='index'),
+    path('api/',views.memo_list)
 ]
 
