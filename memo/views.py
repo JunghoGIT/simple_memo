@@ -11,13 +11,46 @@ from accounts.models import Profile
 # Create your views here.
 
 
-@api_view(['GET'])
-def memo_list(request):
+@api_view(['GET','POST'])
+def memo_list(request,nickname):
     if request.method=='GET':
-        memo = Memo.objects.all()
+        memo = Memo.objects.filter(author=nickname)
         serializer = MemoSerializer(memo, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status= status.HTTP_200_OK)
+    elif request.method=='POST':
+        memo = MemoSerializer(data=request.data)
+        if memo.is_valid():
+
+            memo.save()
+            return Response(status=status.HTTP_201_CREATED)
+
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET','PUT','DELETE'])
+def memo_detail(request,pk,nickname):
+    try:
+        memo = Memo.objects.get(id=pk)
+    except Memo.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'GET':
+        serializer = MemoSerializer(memo)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        serializer = MemoSerializer(memo, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        memo.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 @login_required(login_url='/accounts/login')
 def index(request):
@@ -28,3 +61,7 @@ def index(request):
     except Profile.DoesNotExist :
         return redirect('accounts:create_nickname')
 
+
+@login_required(login_url='/accounts/login')
+def memo_create(request):
+    return render(request,'memo/memo_create.html')

@@ -46,6 +46,18 @@
   .memo_preview{
     color:grey;
   }
+  textarea {
+    margin-right :1rem;
+    background-attachment: local;
+    background-image:
+    linear-gradient(to right, white 10px, transparent 10px),
+    linear-gradient(to left, white 10px, transparent 10px),
+    repeating-linear-gradient(white, white 30px, #ccc 30px, #ccc 31px, white 31px);
+    line-height: 31px;
+    padding: 8px 10px;
+  }
+
+
 
 </style>
 
@@ -59,9 +71,9 @@
                 {% if messages %}
                 <div>
 
-                        {% for message in messages %}
-                     {% bootstrap_messages message %}
-                        {% endfor %}
+                    {% for message in messages %}
+                    {% bootstrap_messages message %}
+                    {% endfor %}
 
                 </div>
                 {% endif %}
@@ -70,7 +82,8 @@
 
                 {% endblock %}
             </div>
-                            <a href="{% url 'accounts:logout' %}">로그아웃</a>
+            {{user.profile.nickname}}
+            <a href="{% url 'accounts:logout' %}">로그아웃</a>
 
         </div><!--end of col-4 -->
         <div class="col-4"></div>

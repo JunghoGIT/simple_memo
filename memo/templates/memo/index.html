@@ -5,19 +5,115 @@
 {% block content %}
 
 
+<script>
+    let memo_list
 
-<div class="row" style="border-style:solid; height:8%; margin:0px;">
+    $(document).ready(function get_list () {
+        $.ajax({
+            type: "GET",
+            datatype: 'json',
+            url: "{% url 'memo:memo_list' user.profile.nickname %}",
+            success: function (data) {
+                memo_list = data
+                console.log(memo_list[0])
+                for (i in memo_list) {
+                    $("#memo_div").append(`<h5><a href='javascript:detail(${memo_list[i].id});'>${memo_list[i].title}</a></h5>
+                <div class='memo_contents'>
+                <span class='memo_date'>${memo_list[i].create_at}</span>
+                <span class='memo_preview'>${memo_list[i].content}</span>
+                </div><hr>`);
+                }
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            },
+        })
+    })
+
+    function detail(pk) {
+        var memo_pk = pk
+        $.ajax({
+            type: "GET",
+            datatype: 'json',
+            url: `api/memo/{{user.profile}}/${memo_pk}`,
+            success: function (data) {
+                $('#memo_div').empty()
+                $('#menu_row').empty()
+                $('#menu_row').append(`<a href='javascript:location.reload();'>뒤로</a><a href='javascript:delete_memo(${data.id});'>삭제</a> <a href='javascript:update(${data.id});'>수정</a>`)
+
+                console.log(data)
+                var detail_title = data.title
+                var detail_content = data.content
+
+                 $("#memo_div").append(`<textarea rows="1" style="width:95%" id="title_textarea">${detail_title}</textarea>
+                <textarea style="width:95%; height:300%;" id="content_textarea">${detail_content}</textarea>`);
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            }
+        })
+    }
+
+    function update(pk) {
+        var memo_pk = pk
+        var title = $("#title_textarea").val()
+        var content = $("#content_textarea").val()
+        console.log(title)
+        var memo_param ={
+            'title' : title,
+            'content' : content,
+            'author' : '관리자' ,
+        }
+        $.ajax({
+            type: "PUT",
+            datatype: 'json',
+            headers: {'X-CSRFTOKEN': '{{ csrf_token }}'},
+            url: `api/memo/{{user.profile}}/${memo_pk}`,
+            data: memo_param,
+            success: function (data) {
+                detail(memo_pk)
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            }
+        })
+    }
+
+    function delete_memo(pk) {
+        var memo_pk = pk
+        $.ajax({
+            type: "DELETE",
+            datatype: 'json',
+            headers: {'X-CSRFTOKEN': '{{ csrf_token }}'},
+            url: `api/memo/{{user.profile}}/${memo_pk}`,
+            success: function (data) {
+                location.reload()
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            }
+        })
+    }
+
+
+
+</script>
+
+
+<div class="row" id="menu_row"style="border-style:solid; height:8%; margin:0px;">
+
+    <a href="{% url 'memo:memo_create' %} ">작성</a>
 
 </div>
 <div class="container">
-    <h2>  Notes</h2>
+    <h2> Notes</h2>
 
 
     <div class="row">
 
-        <div class="memo">
+        <div class="memo" id="memo_div">
             <h5>메모 타이틀</h5>
-            <div class="memo_contents" >
+            <div class="memo_contents">
                 <span class="memo_date">날짜</span> <span class="memo_preview">본문입니다아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아</span>
             </div>
             <hr>

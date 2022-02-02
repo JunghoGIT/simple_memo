@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 
 class Profile(models.Model):
     user = models.OneToOneField(get_user_model(),on_delete=models.CASCADE)
-    nickname = models.CharField(max_length=20,unique=True,blank=True)
+    nickname = models.CharField(max_length=20,unique=True,blank=True,primary_key=True)
 
     def __str__(self):
         return self.nickname

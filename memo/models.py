@@ -7,8 +7,9 @@ from accounts.models import Profile
 
 class Memo(models.Model):
 
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, to_field= 'nickname')
+    title = models.CharField(max_length=30)
     content = models.TextField()
-    create_at = models.DateTimeField(auto_now_add=True)
+    create_at = models.DateField(auto_now_add=True)
 
 
