@@ -4,8 +4,12 @@
 {% block content %}
 
 
-<form method="post">
+<div style="text-align:center; margin-top:50%;">
+  <form method="post">
   {% csrf_token %}
-  <button type="submit">{% trans "구글 계정으로 로그인" %}</button>
+  <button style="width: 20rem; height:8rem; background-color:black; color:white; font-size:2rem;"type="submit">{% trans "구글 계정으로 로그인" %}</button>
 </form>
+
+</div>
+
 {% endblock %}

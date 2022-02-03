@@ -39,7 +39,7 @@
             success: function (data) {
                 $('#memo_div').empty()
                 $('#menu_row').empty()
-                $('#menu_row').append(`<a href='javascript:location.reload();'>뒤로</a><a href='javascript:delete_memo(${data.id});'>삭제</a> <a href='javascript:update(${data.id});'>수정</a>`)
+                $('#menu_row').append(`<div id='back'><a href='javascript:location.reload();'>목록 </a></div><a class='menu_detail' href='javascript:delete_memo(${data.id});'>삭제</a> <a class='menu_detail' href='javascript:update(${data.id});'>수정</a>`)
 
                 console.log(data)
                 var detail_title = data.title
@@ -62,7 +62,7 @@
         var memo_param ={
             'title' : title,
             'content' : content,
-            'author' : '관리자' ,
+            'author' : '{{user.profile.nickname}}' ,
         }
         $.ajax({
             type: "PUT",
@@ -95,14 +95,50 @@
         })
     }
 
+    function create_form(){
+        $('#memo_div').empty()
+        $('#menu_row').empty()
+        $('#menu_row').append(`<a href='javascript:create_memo()'>생성</a>`)
+        $("#memo_div").append(`<textarea rows="1" style="width:95%" id="title_textarea">제목을 입력해주세요.(20자 미만)</textarea>
+                <textarea style="width:95%; height:300%;" id="content_textarea">내용을 입력해주세요.</textarea>`);
+
+    }
+
+    function create_memo() {
+        var title = $("#title_textarea").val()
+        var content = $("#content_textarea").val()
+        console.log(title)
+        var memo_param ={
+            'title' : title,
+            'content' : content,
+            'author' : '{{user.profile}}' ,
+        }
+        console.log(memo_param)
+        $.ajax({
+                        type: "POST",
+                        headers: {
+                            'X-CSRFTOKEN': '{{ csrf_token }}'
+                        },
+                        datatype: 'json',
+                        data: memo_param,
+                        url: "{% url 'memo:memo_list' user.profile.nickname %}",
+                        success: function (response) {
+                            location.reload()
+                        },
+                        error: function (response) {
+                            console.log(response.responseJSON.errors);
+                        }
+                    })
+    }
+
 
 
 </script>
 
 
-<div class="row" id="menu_row"style="border-style:solid; height:8%; margin:0px;">
+<div class="col-12" id="menu_row" >
 
-    <a href="{% url 'memo:memo_create' %} ">작성</a>
+    <a href="javascript:create_form();">새 글 작성</a>
 
 </div>
 <div class="container">
@@ -112,9 +148,9 @@
     <div class="row">
 
         <div class="memo" id="memo_div">
-            <h5>메모 타이틀</h5>
+
             <div class="memo_contents">
-                <span class="memo_date">날짜</span> <span class="memo_preview">본문입니다아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아</span>
+
             </div>
             <hr>
         </div>

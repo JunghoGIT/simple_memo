@@ -61,7 +61,3 @@ def index(request):
     except Profile.DoesNotExist :
         return redirect('accounts:create_nickname')
 
-
-@login_required(login_url='/accounts/login')
-def memo_create(request):
-    return render(request,'memo/memo_create.html')
