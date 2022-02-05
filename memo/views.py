@@ -11,16 +11,17 @@ from accounts.models import Profile
 # Create your views here.
 
 
-@api_view(['GET','POST'])
-def memo_list(request,nickname):
-    if request.method=='GET':
+@api_view(['GET', 'POST'])
+def memo_list(request, nickname):
+
+    if request.method == 'GET':
         memo = Memo.objects.filter(author=nickname)
         serializer = MemoSerializer(memo, many=True)
         return Response(serializer.data, status= status.HTTP_200_OK)
-    elif request.method=='POST':
+
+    elif request.method == 'POST':
         memo = MemoSerializer(data=request.data)
         if memo.is_valid():
-
             memo.save()
             return Response(status=status.HTTP_201_CREATED)
 
